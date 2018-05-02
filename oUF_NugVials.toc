@@ -1,0 +1,6 @@
+## Interface: 70300
+## Author: d87
+## Version: 1
+## Dependencies: oUF
+## Notes: oUF layout
+player.lua
