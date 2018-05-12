@@ -62,6 +62,14 @@ local MakeModelRegion = function(self,w,h,model_path, x,y,z)
     pmf.ResetTransformations = ResetTransformations
     pmf:Redraw()
 
+    -- local pmf = CreateFrame("Frame", nil, self )
+    -- pmf:SetSize(w,h)
+
+    -- local t = pmf:CreateTexture(nil, "ARTWORK", 2)
+    -- t:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+    -- t:SetVertexColor(0,0,0,0.2)
+    -- t:SetAllPoints(pmf)
+
     return pmf
 end
 
@@ -98,14 +106,17 @@ local vialSettings = {
 }
 
 local function MakeVial(parent, width, height, powerType)
-    local f = CreateFrame("StatusBar", nil, UIParent)
+    local f = CreateFrame("Frame", nil, parent)
     f:SetHeight(height)
     f:SetWidth(width)
-    f:SetStatusBarTexture([[Interface\AddOns\oUF_NugVials\vialLiquid.tga]])
+
+    local t = f:CreateTexture(nil, "ARTWORK", 0)
+    t:SetTexture([[Interface\AddOns\oUF_NugVials\vialLiquid.tga]])
+    t:SetAllPoints(f)
 
     local opts = vialSettings[powerType]
     if not opts then return end
-    f:SetStatusBarColor(unpack(opts.color))
+    t:SetVertexColor(unpack(opts.color))
 
     if opts.darkSmoke then
         local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
@@ -188,12 +199,6 @@ local function MakeVialBar(root)
     root:SetWidth(256*m)
     root:SetHeight(128*m)
 
-	
-
-	-- The overlay is meant to hold overlay textures like the spark, glow, etc
-	local overlay = CreateFrame("Frame", nil, root)
-	overlay:SetFrameLevel(root:GetFrameLevel() + 5)
-	overlay:SetAllPoints(root)
 
     local bg = root:CreateTexture(nil, "BACKGROUND")
     bg:SetWidth(256*m)
@@ -208,23 +213,15 @@ local function MakeVialBar(root)
     local manaWidth = 26
     local healthHeight = 154
 
-    local health = MakeVial(root, healthWidth, healthHeight, "HEALTH")
-
-    local mana = MakeVial(root, manaWidth, healthHeight, "MANA")
-
-
-
+    
     -- The scrollchild is where we put rotating textures that needs to be cropped.
 	-- local scrollchild = CreateFrame("Frame", nil, root)
 	-- scrollchild:SetSize(1,1)
 
 	-- The scrollframe defines the height/filling of the orb.
-	local scrollframeHealth = CreateFrame("ScrollFrame", nil, root)
-	scrollframeHealth:SetScrollChild(health)
-	scrollframeHealth:SetPoint("BOTTOM")
-    scrollframeHealth:SetSize(health:GetWidth(), health:GetHeight())
-    scrollframeHealth:SetPoint("BOTTOM", root , "BOTTOM", -15, 10)
-    scrollframeHealth:SetVerticalScroll(0)
+	local scrollframeHealth = CreateFrame("ScrollFrame", "oUF_NugVialsHealthScroll", root)
+	
+    -- scrollframeHealth:SetVerticalScroll(0)
 
     scrollframeHealth._height = healthHeight
     scrollframeHealth.SetValue = ScrollFrameSetValue
@@ -233,15 +230,18 @@ local function MakeVialBar(root)
     scrollframeHealth.GetValue = ScrollFrameGetValue
     scrollframeHealth.SetStatusBarTexture = ScrollFrameSetStatusBarTexture
 
+    local health = MakeVial(scrollframeHealth, healthWidth, healthHeight, "HEALTH")
+    scrollframeHealth:SetScrollChild(health)
+    scrollframeHealth:SetSize(healthWidth, healthHeight)
+    scrollframeHealth:SetPoint("BOTTOM", root , "BOTTOM", -15, 10)
 
-    -- HEALTHBAR = scrollframeHealth
+    health:SetPoint("CENTER")
+
+
+    HEALTHBAR = scrollframeHealth
     
     local scrollframeMana = CreateFrame("ScrollFrame", nil, root)
-	scrollframeMana:SetScrollChild(mana)
-	scrollframeMana:SetPoint("BOTTOM")
-    scrollframeMana:SetSize(mana:GetWidth(), mana:GetHeight())
-    scrollframeMana:SetPoint("BOTTOM", root , "BOTTOM", 16, 10)
-    scrollframeMana:SetVerticalScroll(0)
+    -- scrollframeMana:SetVerticalScroll(0)
 
     scrollframeMana._height = healthHeight
     scrollframeMana.SetValue = ScrollFrameSetValue
@@ -250,7 +250,10 @@ local function MakeVialBar(root)
     scrollframeMana.GetValue = ScrollFrameGetValue
     scrollframeMana.SetStatusBarTexture = ScrollFrameSetStatusBarTexture
 
-
+    local mana = MakeVial(scrollframeMana, manaWidth, healthHeight, "MANA")
+    scrollframeMana:SetScrollChild(mana)
+    scrollframeMana:SetSize(manaWidth, healthHeight)
+    scrollframeMana:SetPoint("BOTTOM", root , "BOTTOM", 16, 10)
 
     local fgf = CreateFrame("Frame", nil, root)
     fgf:SetWidth(256*m)
@@ -334,4 +337,4 @@ oUF:SetActiveStyle"PlayerVials"
 
 local player = oUF:Spawn("player","oUF_Player")
 player:SetFrameLevel(7)
-player:SetPoint("BOTTOM",50,0)
+player:SetPoint("BOTTOM",50,150)
