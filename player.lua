@@ -1,14 +1,3 @@
--- local mana = {.4, .4, 1}
--- local colors = setmetatable({
---     health = { 1, .4, .4}, {__index = oUF.health},
--- 	power = setmetatable({
--- 		["MANA"] = mana,
--- 		["RAGE"] = mana,
--- 		["ENERGY"] = mana,
--- 	}, {__index = oUF.colors.power}),
--- }, {__index = oUF.colors})
-
-
 local menu = function(self)
 	local unit = self.unit:sub(1, -2)
 	local cunit = self.unit:gsub("(.)", string.upper, 1)
@@ -46,8 +35,8 @@ local ResetTransformations = function(self)
     self:SetPosition(0,0,0)
 end
 
-local MakeModelRegion = function(self,w,h,model_path, x,y,z)
-    local pmf = CreateFrame("PlayerModel", nil, self )
+local MakeModelRegion = function(parent,w,h,model_path, x,y,z)
+    local pmf = CreateFrame("PlayerModel", nil, parent )
     pmf:SetSize(w,h)
 
     pmf.model_scale = 1
@@ -71,23 +60,6 @@ local MakeModelRegion = function(self,w,h,model_path, x,y,z)
     -- t:SetAllPoints(pmf)
 
     return pmf
-end
-
-local function CreateActionBarInset()
-    local f = CreateFrame("Frame", nil, UIParent)
-    f:SetWidth(217)
-    f:SetHeight(109)
-    f:SetPoint("BOTTOM", UIParent, "BOTTOM", 70,0)
-
-    -- local t1 = f:CreateTexture(nil, "BACKGROUND", 1)
-    -- t1:SetAllPoints(f)
-    -- t1:SetTexture([[Interface\AddOns\oUF_NugVials\vialStandBG.tga]])
-
-    -- local t2 = f:CreateTexture(nil, "OVERLAY", 3)
-    -- t2:SetAllPoints(f)
-    -- t2:SetTexture([[Interface\AddOns\oUF_NugVials\vialStandFG.tga]])
-
-    return f
 end
 
 local vialSettings = {
@@ -118,6 +90,8 @@ local function MakeVial(parent, width, height, powerType)
     if not opts then return end
     t:SetVertexColor(unpack(opts.color))
 
+    -- I found out that only the first PlayerModel child will be clipped by scroll frame
+
     if opts.darkSmoke then
         local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
         darkSmoke:SetPoint("BOTTOM", f, "BOTTOM", 0,-15)
@@ -138,26 +112,15 @@ local function MakeVial(parent, width, height, powerType)
 
     local bigBubbles2 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
     bigBubbles2:SetPoint("TOP", f, "TOP", 0, height*0.2)
-
-    -- local bigBubbles3 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
-    -- bigBubbles3:SetPoint("TOP", f, "TOP", 0, height*0.5)
     
 
     local spark = f:CreateTexture(nil, "ARTWORK", 4)
     spark:SetBlendMode("ADD")
     spark:SetTexture([[Interface\AddOns\oUF_NugVials\vialSpark.tga]])
-    -- spark:SetTexCoord(1,1,0,1,1,0,0,0)
     spark:SetSize(width, width)
 
     spark:SetPoint("CENTER", f, "TOP",0,0)
     spark:SetVertexColor(unpack(opts.color))
-
-    -- f:SetPoint("BOTTOM", bg , "BOTTOM", -20, 15)
-
-    -- local t = f:CreateTexture(nil, "ARTWORK",1)
-    -- t:SetBlendMode("ADD")
-    -- t:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
-    -- t:SetAllPoints(f)
 
     return f
 end
@@ -192,10 +155,8 @@ local ScrollFrameSetStatusBarTexture = function() end
 
 local function MakeVialBar(root)
     -- The root is the top level frame object 
-    -- that will respond to SetSize, SetPoint and similar.
     local m = 0.45
 
-    -- local root = CreateFrame("Frame", nil, parent)
     root:SetWidth(256*m)
     root:SetHeight(128*m)
 
@@ -206,22 +167,11 @@ local function MakeVialBar(root)
     bg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeBG.tga]])
     bg:SetAllPoints()
 
-
-
-    -- local bg = CreateActionBarInset()
     local healthWidth = 36
     local manaWidth = 26
     local healthHeight = 154
 
-    
-    -- The scrollchild is where we put rotating textures that needs to be cropped.
-	-- local scrollchild = CreateFrame("Frame", nil, root)
-	-- scrollchild:SetSize(1,1)
-
-	-- The scrollframe defines the height/filling of the orb.
 	local scrollframeHealth = CreateFrame("ScrollFrame", "oUF_NugVialsHealthScroll", root)
-	
-    -- scrollframeHealth:SetVerticalScroll(0)
 
     scrollframeHealth._height = healthHeight
     scrollframeHealth.SetValue = ScrollFrameSetValue
@@ -235,13 +185,8 @@ local function MakeVialBar(root)
     scrollframeHealth:SetSize(healthWidth, healthHeight)
     scrollframeHealth:SetPoint("BOTTOM", root , "BOTTOM", -15, 10)
 
-    health:SetPoint("CENTER")
-
-
-    HEALTHBAR = scrollframeHealth
     
     local scrollframeMana = CreateFrame("ScrollFrame", nil, root)
-    -- scrollframeMana:SetVerticalScroll(0)
 
     scrollframeMana._height = healthHeight
     scrollframeMana.SetValue = ScrollFrameSetValue
@@ -294,10 +239,6 @@ end
 local PlayerVials = function(self, unit)
     -- local width = 157
     -- local height = 217
---~     self:SetAttribute('initial-height', height)
---~     self:SetAttribute('initial-width', width)
-    -- self:SetHeight(height)
-    -- self:SetWidth(width)
 
     MakeVialBar(self)
 
@@ -337,4 +278,4 @@ oUF:SetActiveStyle"PlayerVials"
 
 local player = oUF:Spawn("player","oUF_Player")
 player:SetFrameLevel(7)
-player:SetPoint("BOTTOM",50,150)
+player:SetPoint("BOTTOM",50,0)
