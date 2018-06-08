@@ -1,18 +1,3 @@
-local menu = function(self)
-	local unit = self.unit:sub(1, -2)
-	local cunit = self.unit:gsub("(.)", string.upper, 1)
-
-	if(unit == "party" or unit == "partypet") then
-		ToggleDropDownMenu(1, nil, _G["PartyMemberFrame"..self.id.."DropDown"], "cursor", 0, 0)
-	elseif(_G[cunit.."FrameDropDown"]) then
-		ToggleDropDownMenu(1, nil, _G[cunit.."FrameDropDown"], "cursor", 0, 0)
-	end
-end
-
-
-
-
-
 
 local Redraw = function(self)
     if not self.model_path then return end
@@ -242,10 +227,7 @@ local PlayerVials = function(self, unit)
 
     MakeVialBar(self)
 
-	self.menu = menu
-
 	self:RegisterForClicks"anyup"
-	self:SetAttribute("*type2", "menu")
 
 
     -- self.colors = colors
@@ -278,4 +260,6 @@ oUF:SetActiveStyle"PlayerVials"
 
 local player = oUF:Spawn("player","oUF_Player")
 player:SetFrameLevel(7)
-player:SetPoint("BOTTOM",50,0)
+player:SetFrameStrata("HIGH")
+player:SetPoint("BOTTOM",283,0)
+
