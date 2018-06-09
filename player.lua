@@ -115,7 +115,7 @@ local ScrollFrameSetValue = function(self, cur)
     local min = self._min
     self._cur = cur
     local total = (max - min)
-    local v =0
+    local v = 0
     if total ~= 0 then
         v = (cur - min) / total
     end
@@ -146,15 +146,15 @@ local function MakeVialBar(root)
     -- The root is the top level frame object 
     local m = 0.45
 
-    root:SetWidth(256*m)
-    root:SetHeight(128*m)
+    root:SetWidth(170*m)
+    root:SetHeight(110*m)
 
 
     local bg = root:CreateTexture(nil, "BACKGROUND")
     bg:SetWidth(256*m)
     bg:SetHeight(128*m)
     bg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeBG.tga]])
-    bg:SetAllPoints()
+    bg:SetPoint("BOTTOM", root, "BOTTOM",0,0)
 
     local healthWidth = 36
     local manaWidth = 26
