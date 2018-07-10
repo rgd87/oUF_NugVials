@@ -265,5 +265,5 @@ oUF:SetActiveStyle"PlayerVials"
 local player = oUF:Spawn("player","oUF_Player")
 player:SetFrameLevel(7)
 player:SetFrameStrata("HIGH")
-player:SetPoint("BOTTOM",283,0)
+player:SetPoint("BOTTOM",158,0)
 
