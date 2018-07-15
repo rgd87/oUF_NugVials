@@ -6,6 +6,9 @@ manual-changelog:
   filename: CHANGELOG
   markup-type: markdown
 
+required-dependencies:
+  - ouf
+
 ignore:
-  texture5.psd
-  README.md
+  - texture5.psd
+  - README.md
