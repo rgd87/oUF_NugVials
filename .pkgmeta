@@ -1,0 +1,11 @@
+package-as: oUF_NugVials
+
+enable-nolib-creation: no
+
+manual-changelog:
+  filename: CHANGELOG
+  markup-type: markdown
+
+ignore:
+  texture5.psd
+  README.md
