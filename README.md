@@ -9,7 +9,7 @@ Optional plugins:
 This addon only provides the player frame.  
 - [oUF_NugTarget](https://github.com/rgd87/oUF_NugTarget) - target/focus/pet and other frames
 
-Vials are sort of compatible with the default action bar, but Azerite bar gets is in the way and there’s no way to disable it without causing taint.  
-So i just use Dominos + my own background textures ([NugArt](https://github.com/rgd87/NugArt) addon)
+Vials are compatible with the default action bar, but you're better to remove Azerite/Exp Bar with [this addon](http://www.wowinterface.com/downloads/info24718-HideExperienceBar.html)  
+I use Dominos + my own background textures ([NugArt](https://github.com/rgd87/NugArt) addon)
 
 
