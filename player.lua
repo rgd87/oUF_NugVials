@@ -20,11 +20,11 @@ local ResetTransformations = function(self)
     self:SetPosition(0,0,0)
 end
 
-local MakeModelRegion = function(parent,w,h,model_path, x,y,z)
+local MakeModelRegion = function(parent,w,h,model_path, x,y,z, scale)
     local pmf = CreateFrame("PlayerModel", nil, parent )
     pmf:SetSize(w,h)
 
-    pmf.model_scale = 1
+    pmf.model_scale = scale or 1
     pmf.ox = x
     pmf.oy = y
     pmf.oz = z
@@ -195,12 +195,23 @@ local function MakeVialBar(root)
     fgf:SetPoint("BOTTOM",root, "BOTTOM",0,0)
     fgf:SetFrameLevel(root:GetFrameLevel() + 3)
     
-    local fg = fgf:CreateTexture(nil, "ARTWORK", 4)
+    local fg = fgf:CreateTexture(nil, "ARTWORK",nil, 4)
     -- fg:SetWidth(256*m)
     -- fg:SetHeight(512*m)
     fg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeFG.tga]])   
     fg:SetAllPoints()
     -- fg:SetPoint("BOTTOM",root, "BOTTOM",0,0)
+
+    local indBG = fgf:CreateTexture(nil, "ARTWORK", nil, 5)
+    indBG:SetTexture([[Interface\AddOns\oUF_NugVials\vialIndicator.tga]])
+    indBG:SetSize(40, 40)
+    indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
+
+    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/purpleflame_low.m2", 2.2,0,1, 1)
+    -- indPoint.model_path = "spells/enchantments/redflame_low.m2"
+    -- indPoint.model_path = "spells/enchantments/blueflame_low.m2"
+    indPoint:Redraw()
+    indPoint:SetPoint("CENTER", indBG, "CENTER",0,-3)
 
     local vialGlass1 = fgf:CreateTexture(nil, "BORDER",1)
     vialGlass1:SetBlendMode("ADD")
