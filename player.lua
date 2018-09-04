@@ -313,6 +313,7 @@ function ns.CreateIndicator(fgf)
     indFrame.point = indPoint
 
     indFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+    indFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     local IsResting = IsResting
     local restingEffect = "purple"
 
@@ -361,8 +362,6 @@ function ns.CreateIndicator(fgf)
     end
 
     indFrame:SetScript("OnEvent", indFrame.Update)
-    indFrame:Update()
-
 
     return indFrame
 end
