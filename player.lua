@@ -1,3 +1,4 @@
+local addonName, ns = ...
 
 local Redraw = function(self)
     if not self.model_path then return end
@@ -202,27 +203,63 @@ local function MakeVialBar(root)
     fg:SetAllPoints()
     -- fg:SetPoint("BOTTOM",root, "BOTTOM",0,0)
 
+    local indicator = ns.CreateIndicator(fgf)
+
+    local vialGlass1 = fgf:CreateTexture(nil, "BORDER",1)
+    vialGlass1:SetBlendMode("ADD")
+    vialGlass1:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
+    vialGlass1:SetAllPoints(scrollframeHealth)
+
+    local vialGlass2 = fgf:CreateTexture(nil, "BORDER",1)
+    vialGlass2:SetBlendMode("ADD")
+    vialGlass2:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
+    vialGlass2:SetAllPoints(scrollframeMana)
+
+
+    root.Health = scrollframeHealth
+    root.Power = scrollframeMana
+	  
+    
+    return root
+end
+
+
+function ns.CreateIndicator(fgf)
     local indBG = fgf:CreateTexture(nil, "ARTWORK", nil, 5)
     indBG:SetTexture([[Interface\AddOns\oUF_NugVials\vialIndicator.tga]])
     indBG:SetSize(40, 40)
     indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
 
 
-    -- local colors = {
-    --     purple = "spells/enchantments/purpleflame_low.m2",
-    --     orange = "spells/enchantments/redflame_low.m2",
-    --     blue = "spells/enchantments/blueflame_low.m2",
-    --     green = "spells/enchantments/greenflame_low.m2",
-    --     yellow = "spells/enchantments/yellowflame_low.m2",
-    -- }
+    local colors = {
+        green =  {"spells/enchantments/greenflame_low.m2", 1, 2.2,0,1 },
+        blue =  {"spells/enchantments/blueflame_low.m2", 1, 2.2,0,1 },
+        purple =  {"spells/enchantments/purpleflame_low.m2", 1, 2.2,0,1 },
+        orange =  {"spells/enchantments/redflame_low.m2", 1, 2.2,0,1 },
+        holy = { "spells/Holy_precast_med_hand_simple.m2", 1.6, 0, 0, 0 },
+    }
 
-    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/redflame_low.m2", 2.2,0,1, 1)
+    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/purpleflame_low.m2", 2.2,0,1, 1)
     -- indPoint.model_path = "spells/enchantments/redflame_low.m2"
     -- indPoint.model_path = "spells/enchantments/blueflame_low.m2"
     -- indPoint.model_path = "spells/enchantments/greenflame_low.m2"
     -- indPoint.model_path = "spells/enchantments/yellowflame_low.m2"
-    indPoint:Redraw()
+    -- indPoint:Redraw()
+
+    indPoint.SetEffect = function(pmf, name)
+        if name == pmf.currentEffect then return end
+        assert(colors[name], "Effect doesn't exist")
+        local model, scale, x, y, z = unpack(colors[name])
+        pmf.model_scale = scale or 1
+        pmf.ox = x
+        pmf.oy = y
+        pmf.oz = z
+        pmf.model_path = model
+        pmf:Redraw()
+        pmf.currentEffect = name
+    end
     indPoint:SetPoint("CENTER", indBG, "CENTER",0,-3)
+    indPoint:Hide()
 
     indPoint.Hide1 = indPoint.Hide
 
@@ -252,35 +289,83 @@ local function MakeVialBar(root)
         self.HideAnim:Play()
     end
 
-    root.RestingIndicator = indPoint
+    local function FindAura(unit, spellID, filter)
+        for i=1, 100 do
+            local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, auraSpellID = UnitAura(unit, i, filter)
+            if not name then return nil end
+            if spellID == auraSpellID then
+                return name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, auraSpellID
+            end
+        end
+    end
 
-    -- indPoint.SetAlpha1 = indPoint.SetAlpha
-    -- indPoint.SetAlpha = function(self, a)
-    --     self:SetAlpha1(0.2+0.8*a)
-    -- end
-
-    -- UIFrameFlash(indPoint, 0.1, 0.45, 30, true)
-
-    local vialGlass1 = fgf:CreateTexture(nil, "BORDER",1)
-    vialGlass1:SetBlendMode("ADD")
-    vialGlass1:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
-    vialGlass1:SetAllPoints(scrollframeHealth)
-
-    local vialGlass2 = fgf:CreateTexture(nil, "BORDER",1)
-    vialGlass2:SetBlendMode("ADD")
-    vialGlass2:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
-    vialGlass2:SetAllPoints(scrollframeMana)
+    local MakeBuffCheck = function(spellID)
+        return function()
+            return FindAura("player", spellID, "HELPFUL")
+        end
+    end
 
 
-    root.Health = scrollframeHealth
-    root.Power = scrollframeMana
-	  
-    
-    return root
+    local indFrame = CreateFrame("Frame", nil, fgf)
+    -- indFrame:SetScript("OnEvent", function(self, event, ...)
+    --     return self[event](self, event, ...)
+    -- end)
+    indFrame.point = indPoint
+
+    indFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+    local IsResting = IsResting
+    local restingEffect = "purple"
+
+
+    local buffCheck = nil
+    local buffEffect = "orange"
+
+    local _, playerClass = UnitClass("player")
+    if playerClass == "PRIEST" then
+        buffCheck = MakeBuffCheck(21562) --fort
+        -- buffEffect = "holy"
+        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+    elseif playerClass == "WARRIOR" then
+        buffCheck = MakeBuffCheck(6673) --shout
+        -- buffEffect = "orange"
+        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+    elseif playerClass == "MAGE" then
+        buffCheck = MakeBuffCheck(1459) --arcane int
+        -- buffEffect = "blue"
+        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+    elseif playerClass == "ROGUE" then
+        local GetSpecialization = GetSpecialization
+        buffCheck = function()
+            if GetSpecialization() ~= 1 then return true end
+            for i=1, 100 do
+                local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, auraSpellID = UnitAura("player", i, "HELPFUL")
+                if name == nil then return nil end
+                if auraSpellID == 8679 or auraSpellID == 2823 then return true end -- wound or deadly poison
+            end
+        end
+        buffEffect = "green"
+        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        indFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    end
+
+    indFrame.Update = function(self, event, ...)
+        if buffCheck and not buffCheck() then
+            self.point:SetEffect(buffEffect)
+            self.point:Show()
+        elseif IsResting() then
+            self.point:SetEffect(restingEffect)
+            self.point:Show()
+        else
+            self.point:Hide()
+        end
+    end
+
+    indFrame:SetScript("OnEvent", indFrame.Update)
+    indFrame:Update()
+
+
+    return indFrame
 end
-
-
-
 
 
 
