@@ -207,11 +207,59 @@ local function MakeVialBar(root)
     indBG:SetSize(40, 40)
     indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
 
-    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/purpleflame_low.m2", 2.2,0,1, 1)
+
+    -- local colors = {
+    --     purple = "spells/enchantments/purpleflame_low.m2",
+    --     orange = "spells/enchantments/redflame_low.m2",
+    --     blue = "spells/enchantments/blueflame_low.m2",
+    --     green = "spells/enchantments/greenflame_low.m2",
+    --     yellow = "spells/enchantments/yellowflame_low.m2",
+    -- }
+
+    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/redflame_low.m2", 2.2,0,1, 1)
     -- indPoint.model_path = "spells/enchantments/redflame_low.m2"
     -- indPoint.model_path = "spells/enchantments/blueflame_low.m2"
+    -- indPoint.model_path = "spells/enchantments/greenflame_low.m2"
+    -- indPoint.model_path = "spells/enchantments/yellowflame_low.m2"
     indPoint:Redraw()
     indPoint:SetPoint("CENTER", indBG, "CENTER",0,-3)
+
+    indPoint.Hide1 = indPoint.Hide
+
+    local hag = indPoint:CreateAnimationGroup()
+    local h1 = hag:CreateAnimation("Alpha")
+    h1:SetFromAlpha(1)
+    h1:SetToAlpha(0)
+    h1:SetDuration(0.3)
+    h1:SetOrder(1)
+    hag:SetScript("OnFinished", function(self)
+        local frame = self:GetParent()
+        frame:Hide1()
+        frame:SetAlpha(1)
+    end)
+
+
+    indPoint.HideAnim = hag
+
+    indPoint:SetScript("OnShow", function(self)
+        self:Redraw()
+        if self.HideAnim:IsPlaying() then
+            self.HideAnim:Stop()
+            self:SetAlpha(1)
+        end
+    end)
+    indPoint.Hide = function(self)
+        self.HideAnim:Play()
+    end
+
+    root.RestingIndicator = indPoint
+
+    -- indPoint.SetAlpha1 = indPoint.SetAlpha
+    -- indPoint.SetAlpha = function(self, a)
+    --     self:SetAlpha1(0.2+0.8*a)
+    -- end
+
+    -- UIFrameFlash(indPoint, 0.1, 0.45, 30, true)
 
     local vialGlass1 = fgf:CreateTexture(nil, "BORDER",1)
     vialGlass1:SetBlendMode("ADD")
