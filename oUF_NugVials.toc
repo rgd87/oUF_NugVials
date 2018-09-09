@@ -5,4 +5,6 @@
 ## Notes: oUF layout
 ## Version: @project-version@
 
+## X-WoWI-ID: 24719
+
 player.lua
