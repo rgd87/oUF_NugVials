@@ -275,6 +275,22 @@ function ns.CreateIndicator(fgf)
         frame:SetAlpha(1)
     end)
 
+    local pag = indPoint:CreateAnimationGroup()
+    local pa1 = pag:CreateAnimation("Alpha")
+    pa1:SetFromAlpha(1)
+    pa1:SetToAlpha(0.3)
+    pa1:SetDuration(0.15)
+    pa1:SetOrder(1)
+    local pa2 = pag:CreateAnimation("Alpha")
+    pa2:SetFromAlpha(0.3)
+    pa2:SetToAlpha(1)
+    pa2:SetDuration(0.15)
+    pa2:SetOrder(2)
+    pag.a2 = pa2
+    pag:SetLooping("REPEAT")
+    indPoint.pulse = pag
+    
+
 
     indPoint.HideAnim = hag
 
@@ -318,45 +334,54 @@ function ns.CreateIndicator(fgf)
     local restingEffect = "purple"
 
 
+    local showMissingSelfBuffIndicator = false
     local buffCheck = nil
     local buffEffect = "orange"
 
-    local _, playerClass = UnitClass("player")
-    if playerClass == "PRIEST" then
-        buffCheck = MakeBuffCheck(21562) --fort
-        -- buffEffect = "holy"
-        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
-    elseif playerClass == "WARRIOR" then
-        buffCheck = MakeBuffCheck(6673) --shout
-        -- buffEffect = "orange"
-        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
-    elseif playerClass == "MAGE" then
-        buffCheck = MakeBuffCheck(1459) --arcane int
-        -- buffEffect = "blue"
-        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
-    elseif playerClass == "ROGUE" then
-        local GetSpecialization = GetSpecialization
-        buffCheck = function()
-            if GetSpecialization() ~= 1 then return true end
-            for i=1, 100 do
-                local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, auraSpellID = UnitAura("player", i, "HELPFUL")
-                if name == nil then return nil end
-                if auraSpellID == 8679 or auraSpellID == 2823 then return true end -- wound or deadly poison
+    if showMissingSelfBuffIndicator then
+        local _, playerClass = UnitClass("player")
+        if playerClass == "PRIEST" then
+            buffCheck = MakeBuffCheck(21562) --fort
+            -- buffEffect = "holy"
+            indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        elseif playerClass == "WARRIOR" then
+            buffCheck = MakeBuffCheck(6673) --shout
+            -- buffEffect = "orange"
+            indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        elseif playerClass == "MAGE" then
+            buffCheck = MakeBuffCheck(1459) --arcane int
+            -- buffEffect = "blue"
+            indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        elseif playerClass == "ROGUE" then
+            local GetSpecialization = GetSpecialization
+            buffCheck = function()
+                if GetSpecialization() ~= 1 then return true end
+                local deadly
+                local crippling
+                for i=1, 100 do
+                    local name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, auraSpellID = UnitAura("player", i, "HELPFUL")
+                    if name == nil then return crippling and deadly end
+                    if auraSpellID == 8679 or auraSpellID == 2823 then deadly = true end -- wound or deadly poison
+                    if auraSpellID == 3408 then crippling = true end
+                end
             end
+            buffEffect = "green"
+            indFrame:RegisterUnitEvent("UNIT_AURA", "player")
+            indFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
         end
-        buffEffect = "green"
-        indFrame:RegisterUnitEvent("UNIT_AURA", "player")
-        indFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     end
 
     indFrame.Update = function(self, event, ...)
         if buffCheck and not buffCheck() then
             self.point:SetEffect(buffEffect)
             self.point:Show()
+            if not self.point.pulse:IsPlaying() then self.point.pulse:Play() end
         elseif IsResting() then
             self.point:SetEffect(restingEffect)
+            if self.point.pulse:IsPlaying() then self.point.pulse:Stop() end
             self.point:Show()
         else
+            self.point.pulse:Stop()
             self.point:Hide()
         end
     end
