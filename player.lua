@@ -48,18 +48,30 @@ local MakeModelRegion = function(parent,w,h,model_path, x,y,z, scale)
     return pmf
 end
 
+-- [1329848] = "spells/7fx_nightmare_dustcloud_state.m2"
+-- [1249924] = "spells/7fx_ghost_red_state.m2"
+-- [165539] = "spells/acidburn_red.m2"
+-- [1249985] = "spells/7fx_ghost_blue_state.m2"
+-- [165535] = "spells/acidburn_blue.m2"
+-- [1495845] = "spells/algalonsparkles.m2"
+-- [166003] = "spells/enchantments/greenflame_low.m2"
+-- [165995] = "spells/enchantments/blueflame_low.m2"
+-- [166008] = "spells/enchantments/purpleflame_low.m2"
+-- [166011] = "spells/enchantments/redflame_low.m2"
+-- [654832] = "spells/Holy_precast_med_hand_simple.m2"
+
 local vialSettings = {
     HEALTH = {
         color = {0.7, 0, 0},
-        darkSmoke = "spells/7fx_nightmare_dustcloud_state.m2",
-        ambientSmoke = "spells/7fx_ghost_red_state.m2",
-        bigBubbles = "spells/acidburn_red.m2",
+        darkSmoke = 1329848,
+        ambientSmoke = 1249924,
+        bigBubbles = 165539,
     },
     MANA = {
         color = {0.3, 0, 0.9},
-        -- darkSmoke = "spells/7fx_nightmare_dustcloud_state.m2"
-        ambientSmoke = "spells/7fx_ghost_blue_state.m2",
-        bigBubbles = "spells/acidburn_blue.m2",
+        -- darkSmoke = 1329848
+        ambientSmoke = 1249985,
+        bigBubbles = 165535,
     },
 }
 
@@ -86,10 +98,10 @@ local function MakeVial(parent, width, height, powerType)
     local ambientSmoke = MakeModelRegion(f, width-4, height*0.9, opts.ambientSmoke, 0,0,1 )
     ambientSmoke:SetPoint("TOP", f, "TOP", 0, 0)
 
-    local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, "spells/algalonsparkles.m2", 0,0,0 )
+    local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, 1495845, 0,0,0 )
     smallBubbles1:SetPoint("TOP", f, "TOP", 0, 0)
 
-    local smallBubbles2 = MakeModelRegion(f, width*0.8, height*0.5, "spells/algalonsparkles.m2", 0,0,0 )
+    local smallBubbles2 = MakeModelRegion(f, width*0.8, height*0.5, 1495845, 0,0,0 )
     smallBubbles2:SetPoint("TOP", f, "TOP", 0, -height*0.3)
 
 
@@ -232,17 +244,17 @@ function ns.CreateIndicator(fgf)
 
 
     local colors = {
-        green =  {"spells/enchantments/greenflame_low.m2", 1, 2.2,0,1 },
-        blue =  {"spells/enchantments/blueflame_low.m2", 1, 2.2,0,1 },
-        purple =  {"spells/enchantments/purpleflame_low.m2", 1, 2.2,0,1 },
-        orange =  {"spells/enchantments/redflame_low.m2", 1, 2.2,0,1 },
-        holy = { "spells/Holy_precast_med_hand_simple.m2", 1.6, 0, 0, 0 },
+        green =  {166003, 1, 2.2,0,1 },
+        blue =  {165995, 1, 2.2,0,1 },
+        purple =  {166008, 1, 2.2,0,1 },
+        orange =  {166011, 1, 2.2,0,1 },
+        holy = { 654832, 1.6, 0, 0, 0 },
     }
 
-    local indPoint = MakeModelRegion(fgf,35,35,"spells/enchantments/purpleflame_low.m2", 2.2,0,1, 1)
-    -- indPoint.model_path = "spells/enchantments/redflame_low.m2"
-    -- indPoint.model_path = "spells/enchantments/blueflame_low.m2"
-    -- indPoint.model_path = "spells/enchantments/greenflame_low.m2"
+    local indPoint = MakeModelRegion(fgf,35,35,166008, 2.2,0,1, 1)
+    -- indPoint.model_path = 166011
+    -- indPoint.model_path = 165995
+    -- indPoint.model_path = 166003
     -- indPoint.model_path = "spells/enchantments/yellowflame_low.m2"
     -- indPoint:Redraw()
 
