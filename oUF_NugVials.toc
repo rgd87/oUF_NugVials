@@ -1,10 +1,8 @@
-## Interface: 80000
+## Interface: 11302
 ## Author: d87
 ## Version: 1
 ## Dependencies: oUF
 ## Notes: oUF layout
 ## Version: @project-version@
-
-## X-WoWI-ID: 24719
 
 player.lua
