@@ -59,16 +59,17 @@ end
 
 local vialSettings = {
     HEALTH = {
-        color = {0.7, 0, 0},
-        darkSmoke = 1329848,
-        ambientSmoke = 1249924,
-        bigBubbles = 165539,
+        color = {0.5, 0, 0},
+        ambientSmoke = "spells/redghost_state.m2",
+        -- bigBubbles = "spells/acidburn_red.m2",
+        -- smallBubbles1 = 1495845,
+        -- smallBubbles2 = 1495845,
     },
     MANA = {
         color = {0.3, 0, 0.9},
-        -- darkSmoke = 1329848
-        ambientSmoke = 1249985,
-        bigBubbles = 165535,
+        darkSmoke = "spells/shadow_precast_med_base.m2",
+        ambientSmoke = "spells/purpleghost_state.m2",
+        -- bigBubbles = "spells/acidburn_blue.m2",
     },
 }
 
@@ -88,17 +89,20 @@ local function MakeVial(parent, width, height, powerType)
     -- I found out that only the first PlayerModel child will be clipped by scroll frame
 
     if opts.darkSmoke then
-        local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
+        -- local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
+        local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, 0,0,0 )
         darkSmoke:SetPoint("BOTTOM", f, "BOTTOM", 0,-15)
     end
 
-    local ambientSmoke = MakeModelRegion(f, width-4, height*0.9, opts.ambientSmoke, 0,0,1 )
+    local ambientSmoke = MakeModelRegion(f, width-4, height*1, opts.ambientSmoke, 0,0,0 )
     ambientSmoke:SetPoint("TOP", f, "TOP", 0, 0)
+    local ambientSmoke2 = MakeModelRegion(f, width-4, height*1.3, opts.ambientSmoke, 0,0,0 )
+    ambientSmoke2:SetPoint("TOP", f, "TOP", 0, 0)
 
-    local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, 1495845, 0,0,0 )
+    local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, opts.smallBubbles1, 0,0,0 )
     smallBubbles1:SetPoint("TOP", f, "TOP", 0, 0)
 
-    local smallBubbles2 = MakeModelRegion(f, width*0.8, height*0.5, 1495845, 0,0,0 )
+    local smallBubbles2 = MakeModelRegion(f, width*0.8, height*0.5, opts.smallBubbles2, 0,0,0 )
     smallBubbles2:SetPoint("TOP", f, "TOP", 0, -height*0.3)
 
 
