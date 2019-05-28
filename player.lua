@@ -61,6 +61,7 @@ local vialSettings = {
     HEALTH = {
         color = {0.5, 0, 0},
         ambientSmoke = "spells/redghost_state.m2",
+        ambientSmoke2 = "spells/redghost_state.m2",
         -- bigBubbles = "spells/acidburn_red.m2",
         -- smallBubbles1 = 1495845,
         -- smallBubbles2 = 1495845,
@@ -96,8 +97,10 @@ local function MakeVial(parent, width, height, powerType)
 
     local ambientSmoke = MakeModelRegion(f, width-4, height*1, opts.ambientSmoke, 0,0,0 )
     ambientSmoke:SetPoint("TOP", f, "TOP", 0, 0)
-    local ambientSmoke2 = MakeModelRegion(f, width-4, height*1.3, opts.ambientSmoke, 0,0,0 )
-    ambientSmoke2:SetPoint("TOP", f, "TOP", 0, 0)
+    if opts.ambientSmoke2 then
+        local ambientSmoke2 = MakeModelRegion(f, width-4, height*1.3, opts.ambientSmoke2, 0,0,0 )
+        ambientSmoke2:SetPoint("TOP", f, "TOP", 0, 0)
+    end
 
     local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, opts.smallBubbles1, 0,0,0 )
     smallBubbles1:SetPoint("TOP", f, "TOP", 0, 0)
