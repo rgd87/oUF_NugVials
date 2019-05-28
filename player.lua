@@ -243,36 +243,18 @@ function ns.CreateIndicator(fgf)
     indBG:SetSize(40, 40)
     indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
 
-
-    local colors = {
-        green =  {166003, 1, 2.2,0,1 },
-        blue =  {165995, 1, 2.2,0,1 },
-        purple =  {166008, 1, 2.2,0,1 },
-        orange =  {166011, 1, 2.2,0,1 },
-        holy = { 654832, 1.6, 0, 0, 0 },
-    }
-
-    local indPoint = MakeModelRegion(fgf,35,35,166008, 2.2,0,1, 1)
-    -- indPoint.model_path = 166011
-    -- indPoint.model_path = 165995
-    -- indPoint.model_path = 166003
-    -- indPoint.model_path = "spells/enchantments/yellowflame_low.m2"
-    -- indPoint:Redraw()
-
-    indPoint.SetEffect = function(pmf, name)
-        if name == pmf.currentEffect then return end
-        assert(colors[name], "Effect doesn't exist")
-        local model, scale, x, y, z = unpack(colors[name])
-        pmf.model_scale = scale or 1
-        pmf.ox = x
-        pmf.oy = y
-        pmf.oz = z
-        pmf.model_path = model
-        pmf:Redraw()
-        pmf.currentEffect = name
-    end
+    local restingTex = [[Interface\AddOns\oUF_NugVials\purpleflame_tex.tga]]
+    
+    local indPoint = CreateFrame("Frame", nil, fgf)
+    indPoint:SetSize(25, 25)
+    local pt = indPoint:CreateTexture(nil, "ARTWORK", nil, 6)
+    pt:SetTexture([[Interface\AddOns\oUF_NugVials\vialIndicator.tga]])
+    pt:SetAllPoints()
+    pt:SetBlendMode("ADD")
+    indPoint.tex = pt
     indPoint:SetPoint("CENTER", indBG, "CENTER",0,-3)
     indPoint:Hide()
+
 
     indPoint.Hide1 = indPoint.Hide
 
@@ -308,7 +290,6 @@ function ns.CreateIndicator(fgf)
     indPoint.HideAnim = hag
 
     indPoint:SetScript("OnShow", function(self)
-        self:Redraw()
         if self.HideAnim:IsPlaying() then
             self.HideAnim:Stop()
             self:SetAlpha(1)
@@ -344,7 +325,6 @@ function ns.CreateIndicator(fgf)
     indFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
     indFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     local IsResting = IsResting
-    local restingEffect = "purple"
 
 
     local showMissingSelfBuffIndicator = false
@@ -385,12 +365,13 @@ function ns.CreateIndicator(fgf)
     end
 
     indFrame.Update = function(self, event, ...)
-        if buffCheck and not buffCheck() then
-            self.point:SetEffect(buffEffect)
-            self.point:Show()
-            if not self.point.pulse:IsPlaying() then self.point.pulse:Play() end
-        elseif IsResting() then
-            self.point:SetEffect(restingEffect)
+        -- if buffCheck and not buffCheck() then
+        --     self.point:SetEffect(buffEffect)
+        --     self.point:Show()
+        --     if not self.point.pulse:IsPlaying() then self.point.pulse:Play() end
+        -- else
+        if IsResting() then
+            self.point.tex:SetTexture(restingTex)
             if self.point.pulse:IsPlaying() then self.point.pulse:Stop() end
             self.point:Show()
         else
