@@ -114,7 +114,7 @@ local function MakeVial(parent, width, height, powerType)
 
     local bigBubbles2 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
     bigBubbles2:SetPoint("TOP", f, "TOP", 0, height*0.2)
-    
+
 
     local spark = f:CreateTexture(nil, "ARTWORK", 4)
     spark:SetBlendMode("ADD")
@@ -160,7 +160,7 @@ end
 local ScrollFrameSetStatusBarTexture = function() end
 
 local function MakeVialBar(root)
-    -- The root is the top level frame object 
+    -- The root is the top level frame object
     local m = 0.45
 
     root:SetWidth(170*m)
@@ -191,7 +191,7 @@ local function MakeVialBar(root)
     scrollframeHealth:SetSize(healthWidth, healthHeight)
     scrollframeHealth:SetPoint("BOTTOM", root , "BOTTOM", -15, 10)
 
-    
+
     local scrollframeMana = CreateFrame("ScrollFrame", nil, root)
 
     scrollframeMana._height = healthHeight
@@ -211,11 +211,11 @@ local function MakeVialBar(root)
     fgf:SetHeight(512*m)
     fgf:SetPoint("BOTTOM",root, "BOTTOM",0,0)
     fgf:SetFrameLevel(root:GetFrameLevel() + 3)
-    
+
     local fg = fgf:CreateTexture(nil, "ARTWORK",nil, 4)
     -- fg:SetWidth(256*m)
     -- fg:SetHeight(512*m)
-    fg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeFG.tga]])   
+    fg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeFG.tga]])
     fg:SetAllPoints()
     -- fg:SetPoint("BOTTOM",root, "BOTTOM",0,0)
 
@@ -234,8 +234,8 @@ local function MakeVialBar(root)
 
     root.Health = scrollframeHealth
     root.Power = scrollframeMana
-	  
-    
+
+
     return root
 end
 
@@ -246,8 +246,8 @@ function ns.CreateIndicator(fgf)
     indBG:SetSize(40, 40)
     indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
 
-    local restingTex = [[Interface\AddOns\oUF_NugVials\purpleflame_tex.tga]]
-    
+    local restingTex = [[Interface\AddOns\oUF_NugVials\redflame_tex.tga]]
+
     local indPoint = CreateFrame("Frame", nil, fgf)
     indPoint:SetSize(25, 25)
     local pt = indPoint:CreateTexture(nil, "ARTWORK", nil, 6)
@@ -287,7 +287,7 @@ function ns.CreateIndicator(fgf)
     pag.a2 = pa2
     pag:SetLooping("REPEAT")
     indPoint.pulse = pag
-    
+
 
 
     indPoint.HideAnim = hag
