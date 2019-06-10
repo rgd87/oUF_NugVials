@@ -59,16 +59,19 @@ end
 
 local vialSettings = {
     HEALTH = {
-        color = {0.7, 0, 0},
+        color = {0.5, 0, 0},
         darkSmoke = 1329848,
         ambientSmoke = 1249924,
+        ambientSmoke2 = 166692,
         bigBubbles = 165539,
     },
     MANA = {
-        color = {0.3, 0, 0.9},
+        color = {0.2, 0, 0.7},
         -- darkSmoke = 1329848
         ambientSmoke = 1249985,
+        ambientSmoke2 = 166672,
         bigBubbles = 165535,
+        -- lightSmoke = 166808,-- "spells/shadow_precast_med_base.m2",
     },
 }
 
@@ -87,6 +90,11 @@ local function MakeVial(parent, width, height, powerType)
 
     -- I found out that only the first PlayerModel child will be clipped by scroll frame
 
+    -- if opts.lightSmoke then
+    --     local lightSmoke = MakeModelRegion(f, width, height*0.7, opts.lightSmoke, 0,0,0 )
+    --     lightSmoke:SetPoint("BOTTOM", f, "BOTTOM", 0,-15)
+    -- end
+
     if opts.darkSmoke then
         local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
         darkSmoke:SetPoint("BOTTOM", f, "BOTTOM", 0,-15)
@@ -95,6 +103,11 @@ local function MakeVial(parent, width, height, powerType)
     local ambientSmoke = MakeModelRegion(f, width-4, height*0.9, opts.ambientSmoke, 0,0,1 )
     ambientSmoke:SetPoint("TOP", f, "TOP", 0, 0)
 
+    if opts.ambientSmoke2 then
+        local ambientSmoke2 = MakeModelRegion(f, width-4, height*1.3, opts.ambientSmoke2, 0,0,0 )
+        ambientSmoke2:SetPoint("TOP", f, "TOP", 0, 0)
+    end
+
     local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, 1495845, 0,0,0 )
     smallBubbles1:SetPoint("TOP", f, "TOP", 0, 0)
 
@@ -102,12 +115,12 @@ local function MakeVial(parent, width, height, powerType)
     smallBubbles2:SetPoint("TOP", f, "TOP", 0, -height*0.3)
 
 
-    local bigBubbles1 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
-    bigBubbles1:SetPoint("TOP", f, "TOP", 0, -height*0.1)
+    -- local bigBubbles1 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
+    -- bigBubbles1:SetPoint("TOP", f, "TOP", 0, -height*0.1)
 
     local bigBubbles2 = MakeModelRegion(f, width-2, height*0.8, opts.bigBubbles, -20, 0, -4.6 )
     bigBubbles2:SetPoint("TOP", f, "TOP", 0, height*0.2)
-    
+
 
     local spark = f:CreateTexture(nil, "ARTWORK", 4)
     spark:SetBlendMode("ADD")
@@ -153,7 +166,7 @@ end
 local ScrollFrameSetStatusBarTexture = function() end
 
 local function MakeVialBar(root)
-    -- The root is the top level frame object 
+    -- The root is the top level frame object
     local m = 0.45
 
     root:SetWidth(170*m)
@@ -184,7 +197,7 @@ local function MakeVialBar(root)
     scrollframeHealth:SetSize(healthWidth, healthHeight)
     scrollframeHealth:SetPoint("BOTTOM", root , "BOTTOM", -15, 10)
 
-    
+
     local scrollframeMana = CreateFrame("ScrollFrame", nil, root)
 
     scrollframeMana._height = healthHeight
@@ -204,11 +217,11 @@ local function MakeVialBar(root)
     fgf:SetHeight(512*m)
     fgf:SetPoint("BOTTOM",root, "BOTTOM",0,0)
     fgf:SetFrameLevel(root:GetFrameLevel() + 3)
-    
+
     local fg = fgf:CreateTexture(nil, "ARTWORK",nil, 4)
     -- fg:SetWidth(256*m)
     -- fg:SetHeight(512*m)
-    fg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeFG.tga]])   
+    fg:SetTexture([[Interface\AddOns\oUF_NugVials\vialTreeFG.tga]])
     fg:SetAllPoints()
     -- fg:SetPoint("BOTTOM",root, "BOTTOM",0,0)
 
@@ -227,8 +240,8 @@ local function MakeVialBar(root)
 
     root.Health = scrollframeHealth
     root.Power = scrollframeMana
-	  
-    
+
+
     return root
 end
 
@@ -239,8 +252,8 @@ function ns.CreateIndicator(fgf)
     indBG:SetSize(40, 40)
     indBG:SetPoint("BOTTOM", fgf, "BOTTOM", 5,-7)
 
-    local restingTex = [[Interface\AddOns\oUF_NugVials\purpleflame_tex.tga]]
-    
+    local restingTex = [[Interface\AddOns\oUF_NugVials\redflame_tex.tga]]
+
     local indPoint = CreateFrame("Frame", nil, fgf)
     indPoint:SetSize(25, 25)
     local pt = indPoint:CreateTexture(nil, "ARTWORK", nil, 6)
@@ -280,7 +293,7 @@ function ns.CreateIndicator(fgf)
     pag.a2 = pa2
     pag:SetLooping("REPEAT")
     indPoint.pulse = pag
-    
+
 
 
     indPoint.HideAnim = hag
