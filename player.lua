@@ -1,6 +1,7 @@
 local addonName, ns = ...
 
 local isClassic = select(4,GetBuildInfo()) <= 19999
+local _, class = UnitClass("player")
 
 local Redraw = function(self)
     if not self.model_path then return end
@@ -96,10 +97,8 @@ local function MakeVial(parent, width, height, powerType)
         -- local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
         local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, 0,0,0 )
         darkSmoke:SetPoint("BOTTOM", isClassic and parent or f, "BOTTOM", 0,-15)
-        if isClassic then
-            f.darkSmoke = darkSmoke
-            -- darkSmoke:Hide()
-        end
+        f.darkSmoke = darkSmoke
+        -- darkSmoke:Hide()
     end
 
     local ambientSmoke = MakeModelRegion(f, width-4, height*1, opts.ambientSmoke, 0,0,0 )
@@ -241,7 +240,12 @@ local function MakeVialBar(root)
     vialGlass2:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
     vialGlass2:SetAllPoints(scrollframeMana)
 
-    if isClassic then
+    if
+        class == "PRIEST" or
+        class == "SHAMAN" or
+        class == "DRUID" or
+        class == "PALADIN"
+    then
         ns.Make5SRFrame(fgf, scrollframeMana, manaWidth, mana)
     end
 
