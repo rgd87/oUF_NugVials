@@ -1,5 +1,7 @@
 local addonName, ns = ...
 
+local isClassic = select(4,GetBuildInfo()) <= 19999
+
 local Redraw = function(self)
     if not self.model_path then return end
 
@@ -70,6 +72,7 @@ local vialSettings = {
         color = {0.3, 0, 0.9},
         darkSmoke = "spells/shadow_precast_med_base.m2",
         ambientSmoke = "spells/purpleghost_state.m2",
+        ambientSmoke2 = "spells/purpleghost_state.m2",
         -- bigBubbles = "spells/acidburn_blue.m2",
     },
 }
@@ -92,7 +95,11 @@ local function MakeVial(parent, width, height, powerType)
     if opts.darkSmoke then
         -- local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, -8.6, 0, -5.1 )
         local darkSmoke = MakeModelRegion(f, width, height*0.7, opts.darkSmoke, 0,0,0 )
-        darkSmoke:SetPoint("BOTTOM", f, "BOTTOM", 0,-15)
+        darkSmoke:SetPoint("BOTTOM", isClassic and parent or f, "BOTTOM", 0,-15)
+        if isClassic then
+            f.darkSmoke = darkSmoke
+            -- darkSmoke:Hide()
+        end
     end
 
     local ambientSmoke = MakeModelRegion(f, width-4, height*1, opts.ambientSmoke, 0,0,0 )
@@ -100,6 +107,9 @@ local function MakeVial(parent, width, height, powerType)
     if opts.ambientSmoke2 then
         local ambientSmoke2 = MakeModelRegion(f, width-4, height*1.3, opts.ambientSmoke2, 0,0,0 )
         ambientSmoke2:SetPoint("TOP", f, "TOP", 0, 0)
+        if powerType == "MANA" then
+            ambientSmoke2:SetAlpha(0.7)
+        end
     end
 
     local smallBubbles1 = MakeModelRegion(f, width*0.8, height*0.5, opts.smallBubbles1, 0,0,0 )
@@ -231,6 +241,9 @@ local function MakeVialBar(root)
     vialGlass2:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
     vialGlass2:SetAllPoints(scrollframeMana)
 
+    if isClassic then
+        ns.Make5SRFrame(fgf, scrollframeMana, manaWidth, mana)
+    end
 
     root.Health = scrollframeHealth
     root.Power = scrollframeMana
@@ -388,7 +401,71 @@ function ns.CreateIndicator(fgf)
     return indFrame
 end
 
+function ns.Make5SRFrame(parent, attachTo, manaWidth, manaVial)
+    local f = CreateFrame("Frame", nil, parent)
+    f:SetScript("OnEvent", function(self, event, ...)
+        return self[event](self, event, ...)
+    end)
+    f:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+    f:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
 
+    local lastManaDropTime = 0
+    local prevMana = UnitPower("player", 0)
+    f.UNIT_SPELLCAST_SUCCEEDED = function(self, event, unit)
+        if unit == "player" then
+            local now = GetTime()
+            if now - lastManaDropTime < 0.01 then
+                self.startTime = now
+                self:Show()
+                self.spark:Show()
+                manaVial.darkSmoke:Hide()
+            end
+        end
+    end
+    f.UNIT_POWER_UPDATE = function(self, event, unit, ptype)
+        if ptype == "MANA" then
+            local mana = UnitPower("player", 0)
+            if mana < prevMana then
+                lastManaDropTime = GetTime()
+            end
+            prevMana = mana
+        end
+    end
+
+    f.startTime = 0
+    f:SetScript("OnUpdate", function(self, elapsed)
+        local manabar = attachTo
+        local manaHeight = manabar:GetHeight()
+
+        local now = GetTime()
+        local p = (now - self.startTime)/5
+
+        if p > 0.9 then
+            local a = (1 - p)*10
+            if a < 0 then a = 0 end
+            self.spark:SetAlpha(a)
+        end
+        if p >= 1 then
+            self:Hide()
+            self.spark:Hide()
+            self.spark:SetAlpha(1)
+            manaVial.darkSmoke:Show()
+        end
+
+        self:SetPoint("CENTER", manabar, "BOTTOM",0, p*manaHeight)
+    end)
+
+    f:SetSize(manaWidth, manaWidth)
+    f:SetPoint("CENTER", attachTo, "TOP",0,-40)
+
+    local spark = parent:CreateTexture(nil, "ARTWORK", 2)
+    spark:SetBlendMode("ADD")
+    spark:SetTexture([[Interface\AddOns\oUF_NugVials\vialSpark.tga]])
+    spark:SetVertexColor(0.4, 0.4, 0.4)
+    spark:SetSize(manaWidth, manaWidth)
+    spark:SetAllPoints(f)
+    f.spark = spark
+end
 
 local PlayerVials = function(self, unit)
     -- local width = 157
