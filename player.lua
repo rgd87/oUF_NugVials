@@ -409,7 +409,7 @@ local PlayerVials = function(self, unit)
 
     -- self.Health.colorTapping = true
     -- self.Health.colorDisconnected = true
-    self.Health.frequentUpdates = true
+    -- self.Health.frequentUpdates = true
     self.Health.Smooth = true
 
     -- self.Health.bg = hpbg
