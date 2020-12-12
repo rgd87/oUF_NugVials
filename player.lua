@@ -433,7 +433,7 @@ end
 oUF:RegisterStyle("PlayerVials", PlayerVials)
 oUF:SetActiveStyle"PlayerVials"
 
-local player = oUF:Spawn("player","oUF_Player")
+local player = oUF:Spawn("player","oUF_NugVials")
 player:SetFrameLevel(7)
 player:SetFrameStrata("MEDIUM")
 player:SetPoint("BOTTOM",150,0)
