@@ -83,7 +83,7 @@ local function MakeVial(parent, width, height, powerType)
     f:SetHeight(height)
     f:SetWidth(width)
 
-    local t = f:CreateTexture(nil, "ARTWORK", 0)
+    local t = f:CreateTexture(nil, "ARTWORK", nil, 0)
     t:SetTexture([[Interface\AddOns\oUF_NugVials\vialLiquid.tga]])
     t:SetAllPoints(f)
 
@@ -125,7 +125,7 @@ local function MakeVial(parent, width, height, powerType)
     bigBubbles2:SetPoint("TOP", f, "TOP", 0, height*0.2)
 
 
-    local spark = f:CreateTexture(nil, "ARTWORK", 4)
+    local spark = f:CreateTexture(nil, "ARTWORK", nil, 4)
     spark:SetBlendMode("ADD")
     spark:SetTexture([[Interface\AddOns\oUF_NugVials\vialSpark.tga]])
     spark:SetSize(width, width)
@@ -230,12 +230,12 @@ local function MakeVialBar(root)
 
     local indicator = ns.CreateIndicator(fgf)
 
-    local vialGlass1 = fgf:CreateTexture(nil, "BORDER",1)
+    local vialGlass1 = fgf:CreateTexture(nil, "BORDER", nil, 1)
     vialGlass1:SetBlendMode("ADD")
     vialGlass1:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
     vialGlass1:SetAllPoints(scrollframeHealth)
 
-    local vialGlass2 = fgf:CreateTexture(nil, "BORDER",1)
+    local vialGlass2 = fgf:CreateTexture(nil, "BORDER", nil, 1)
     vialGlass2:SetBlendMode("ADD")
     vialGlass2:SetTexture([[Interface\AddOns\oUF_NugVials\vial.tga]])
     vialGlass2:SetAllPoints(scrollframeMana)
@@ -244,6 +244,7 @@ local function MakeVialBar(root)
         class == "PRIEST" or
         class == "SHAMAN" or
         class == "DRUID" or
+        class == "MAGE" or
         class == "PALADIN"
     then
         ns.Make5SRFrame(fgf, scrollframeMana, manaWidth, mana)
@@ -462,7 +463,7 @@ function ns.Make5SRFrame(parent, attachTo, manaWidth, manaVial)
     f:SetSize(manaWidth, manaWidth)
     f:SetPoint("CENTER", attachTo, "TOP",0,-40)
 
-    local spark = parent:CreateTexture(nil, "ARTWORK", 2)
+    local spark = parent:CreateTexture(nil, "ARTWORK", nil, 2)
     spark:SetBlendMode("ADD")
     spark:SetTexture([[Interface\AddOns\oUF_NugVials\vialSpark.tga]])
     spark:SetVertexColor(0.4, 0.4, 0.4)
